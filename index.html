@@ -1,0 +1,411 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Conor Higgins CS6115 Assignment</title>
+
+<script src="http://code.jquery.com/jquery-1.12.4.js"></script>
+
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script type="text/javascript">
+
+	var minSpeed;
+	var maxSpeed;
+	var minMemory;
+	var maxMemory;
+	var minRating;
+	var maxRating;
+	
+	var compareNum = 0;
+	
+	var alreadyThere = new Array();
+	
+	function dropItem(droppedItem)
+	{
+		var dropTarget = document.getElementById('dropArea');
+		
+		if (alreadyThere.includes(droppedItem.id))
+		{
+			alert("This item already exists here. You cannot compare the same item twice. Please choose a different item.");
+		}
+		else
+		{
+			alreadyThere.push(droppedItem.id);
+			var compareProd = document.createElement('div');
+
+			compareProd.setAttribute("class", "compareProduct");
+			compareProd.setAttribute("id", "compare" + compareNum);
+			compareProd.setAttribute("onclick", "removeComp(this.id)");
+			compareProd.style.top = "80px";
+		
+			if (compareNum > 0)
+			{
+				dropTarget.style.height = parseInt(dropTarget.style.height) + 100 + "px";
+			}
+		
+			compareProd.innerHTML = droppedItem.innerHTML;
+				
+			dropTarget.appendChild(compareProd);
+		
+			compareNum++;
+		
+			if (compareNum > 1)
+			{
+			compare();
+			}
+		}
+	}
+	
+	function removeComp(thisId)
+	{
+		for (var i = 0; i < document.getElementsByTagName("span").length; i++)
+		{
+			document.getElementsByTagName("span")[i].style.color = "black";
+		}
+	
+		var dropTarget = document.getElementById('dropArea');
+		compareNum--;
+		
+		var idArray = new Array()
+		for (var i = 0; i < dropArea.getElementsByTagName("div").length; i++)
+		{
+			idArray[i] = dropArea.getElementsByTagName("div")[i].id;
+		}
+		
+		alreadyThere.splice(idArray.indexOf(thisId), 1);
+		
+		document.getElementById(thisId).remove();
+		
+		if (compareNum > 1)
+		{
+			compare();
+		}
+		
+		if (compareNum > 0)
+		{
+			dropTarget.style.height = parseInt(dropTarget.style.height) - 100 + "px";
+		}
+	}
+	
+	function compare()
+	{
+		for (var i = 0; i < document.getElementsByTagName("span").length; i++)
+		{
+			document.getElementsByTagName("span")[i].style.color = "black";
+		}
+		
+		var extract = /[\d.]+/g;
+		var compareArray = document.getElementsByClassName("compareProduct");
+		
+		var spdArray = new Array();
+		var memArray = new Array();
+		var ratArray = new Array();
+		
+		for (var i = 0; i < compareArray.length; i++)
+		{
+			spdArray[i] = compareArray[i].innerHTML.match(extract)[0];
+			memArray[i] = compareArray[i].innerHTML.match(extract)[1];
+			ratArray[i] = compareArray[i].innerHTML.match(extract)[2];
+		}
+		
+		var maxSpd = spdArray.indexOf(Math.max.apply(Math, spdArray).toString());
+		var minSpd = spdArray.indexOf(Math.min.apply(Math, spdArray).toString());
+		document.getElementsByClassName("compareProduct")[maxSpd].getElementsByTagName("span")[0].style.color = "#55FF00";
+		document.getElementsByClassName("compareProduct")[minSpd].getElementsByTagName("span")[0].style.color = "red";
+		for (var i = 0; i < spdArray.length-1; i++)
+		{
+			if (spdArray[i] == spdArray[i+1])
+			{
+				document.getElementsByClassName("compareProduct")[i].getElementsByTagName("span")[0].style.color = "orange";
+				document.getElementsByClassName("compareProduct")[i+1].getElementsByTagName("span")[0].style.color = "orange";
+			}
+		}
+		
+		var maxMem = memArray.indexOf(Math.max.apply(Math, memArray).toString());
+		var minMem = memArray.indexOf(Math.min.apply(Math, memArray).toString());
+		document.getElementsByClassName("compareProduct")[maxMem].getElementsByTagName("span")[1].style.color = "#55FF00";
+		document.getElementsByClassName("compareProduct")[minMem].getElementsByTagName("span")[1].style.color = "red";
+		for (var i = 0; i < memArray.length-1; i++)
+		{
+			if (memArray[i] == memArray[i+1])
+			{
+				document.getElementsByClassName("compareProduct")[i].getElementsByTagName("span")[1].style.color = "orange";
+				document.getElementsByClassName("compareProduct")[i+1].getElementsByTagName("span")[1].style.color = "orange";
+			}
+		}
+		
+		var maxRat = ratArray.indexOf(Math.max.apply(Math, ratArray).toString());
+		var minRat = ratArray.indexOf(Math.min.apply(Math, ratArray).toString());
+		document.getElementsByClassName("compareProduct")[maxRat].getElementsByTagName("span")[2].style.color = "#55FF00";
+		document.getElementsByClassName("compareProduct")[minRat].getElementsByTagName("span")[2].style.color = "red";
+		for (var i = 0; i < ratArray.length-1; i++)
+		{
+			if (ratArray[i] == ratArray[i+1])
+			{
+				document.getElementsByClassName("compareProduct")[i].getElementsByTagName("span")[2].style.color = "orange";
+				document.getElementsByClassName("compareProduct")[i+1].getElementsByTagName("span")[2].style.color = "orange";
+			}
+		}
+		
+	}
+
+	function runSliders()
+	{
+		$("#speedRange").slider({ values: [ 1000, 1800 ] , min: 1000, max: 1800, step: 10});
+		$("#memoryRange").slider({ values: [ 4, 12 ] , min: 4, max: 12});
+		$("#ratingRange").slider({ values: [ 0, 5 ] , min: 0, max: 5, step: 0.1});
+		
+		$("#speedRange").on(
+       		{ slide:
+				function(event, ui) {
+					if (ui.values[0] + 10 > ui.values[1]) { return false };
+					setupSpeed(ui.values[0], ui.values[1]);
+					displayProducts();
+				}
+			}
+		);
+		
+		$("#memoryRange").on(
+       		{ slide:
+				function(event, ui) {
+					if (ui.values[0] + 1 > ui.values[1]) { return false };
+					setupMemory(ui.values[0], ui.values[1]);
+					displayProducts();
+				}
+			}
+		);
+		
+		$("#ratingRange").on(
+       		{ slide:
+				function(event, ui) {
+					if (ui.values[0] + 0.1 > ui.values[1]) { return false };
+					setupRating(ui.values[0], ui.values[1]);
+					displayProducts();
+				}
+			}
+		);
+		
+		setupSpeed($("#speedRange").slider("values", 0), $("#speedRange").slider("values", 1));
+		setupMemory($("#memoryRange").slider("values", 0), $("#memoryRange").slider("values", 1));
+		setupRating($("#ratingRange").slider("values", 0), $("#ratingRange").slider("values", 1));
+		displayProducts();
+	}
+	
+	function setupSpeed(val1, val2)
+	{
+		minSpeed = val1;
+		maxSpeed = val2;
+		document.getElementById('speedValue').value = minSpeed + " to " + maxSpeed;
+	}
+	
+	function setupMemory(val1, val2)
+	{
+		minMemory = val1;
+		maxMemory = val2;
+		document.getElementById('memoryValue').value = minMemory + " to " + maxMemory;
+	}
+	
+	function setupRating(val1, val2)
+	{
+		minRating = val1;
+		maxRating = val2;
+		document.getElementById('ratingValue').value = minRating + " to " + maxRating;
+	}
+	
+	function moreInfoClick()
+	{
+		$("body").on("click", ".product",
+			function(){
+				if($(".sub" + this.id).is(":visible"))
+				{
+					$(".sub" + this.id).slideUp("slow");
+				}
+				else
+				{
+					$(".sub" + this.id).slideDown("slow");
+				}
+				return false;
+			}
+		);
+		
+		$("#dropArea").droppable({ drop: function( event, ui ){ dropItem(ui.helper[0]) }});
+	}
+
+	var products = new Array();
+	products[0] = new Array(1594, 8, 4.5);
+	products[1] = new Array(1632, 6, 3.8);
+	products[2] = new Array(1506, 10, 2.9);
+	products[3] = new Array(1286, 4, 4.0);
+	products[4] = new Array(1344, 10, 3.6);
+	products[5] = new Array(1488, 8, 2.9);
+	products[6] = new Array(1726, 8, 5.0);
+	
+	var prices = new Array();
+	prices[0] = [["www.amazon.co.uk", 857], ["www.newegg.com", 840], ["www.mindfactory.de", 867]];
+	prices[1] = [["www.amazon.co.uk", 678], ["www.newegg.com", 650], ["www.mindfactory.de", 701]];
+	prices[2] = [["www.amazon.co.uk", 501], ["www.newegg.com", 520], ["www.mindfactory.de", 504]];
+	prices[3] = [["www.amazon.co.uk", 604], ["www.newegg.com", 624], ["www.mindfactory.de", 630]];
+	prices[4] = [["www.amazon.co.uk", 758], ["www.newegg.com", 777], ["www.mindfactory.de", 786]];
+	prices[5] = [["www.amazon.co.uk", 645], ["www.newegg.com", 644], ["www.mindfactory.de", 656]];
+	prices[6] = [["www.amazon.co.uk", 780], ["www.newegg.com", 766], ["www.mindfactory.de", 734]];
+	
+	function displayProducts()
+	{
+		// remove all products first, to make sure they stack correctly
+		for (var i = 0; i < products.length; i++)
+		{
+			if (document.getElementById('productId' + i))
+			{
+				document.getElementById('productId' + i).remove();
+				for (var j = 0; j < 3; j++)
+				{
+					document.getElementById("priceId" + i + "number" + j).remove();
+				}
+			}
+		}
+			
+		var productPos = 1;
+		for (var i = 0; i < products.length; i++)
+		{	
+			if (products[i][0] >= minSpeed && products[i][0] <= maxSpeed &&
+					products[i][1] >= minMemory && products[i][1] <= maxMemory &&
+					products[i][2] >= minRating && products[i][2] <= maxRating)
+			{
+				if (!document.getElementById('productId' + i))
+				{					
+					var newProduct = document.createElement('div');
+
+					newProduct.setAttribute("class", "product");
+					newProduct.id = "productId" + i;
+					
+					newProduct.innerHTML = "<span>Speed: " + products[i][0] + "MHz</span>" +
+											"<br>" + 
+											"<span>Memory: " + products[i][1] + "GB</span>" +
+											"<br>" +
+											"<span>Rating: " + products[i][2] + "/5</span>";
+					
+					document.getElementById("section2").appendChild(newProduct);
+					
+					var priceArray = new Array();
+					for (var j = 0; j < 3; j++)
+					{
+						var priceDiv = document.createElement('div');
+						
+						priceDiv.setAttribute("class", "price sub" + newProduct.id);
+						priceDiv.id = "priceId" + i + "number" + j;
+						priceDiv.innerHTML = prices[i][j][0] + ": €" + prices[i][j][1] + "\n";
+						
+						priceArray[j] = prices[i][j][1];
+						
+						document.getElementById("section2").appendChild(priceDiv);
+					}
+					
+					var max = priceArray.indexOf(Math.max.apply(Math, priceArray));
+					var min = priceArray.indexOf(Math.min.apply(Math, priceArray));
+					
+					
+					$("#priceId" + i + "number" + max).css({"color": "white", "background-color": "green"});
+					$("#priceId" + i + "number" + min).css({"color": "white", "background-color": "red"});					
+					$(".price").hide();
+					
+					productPos++;
+				}
+			}
+			else
+			{
+				if (document.getElementById('productId' + i))
+				{
+					document.getElementById('productId' + i).remove();
+					for (var j = 0; j < 3; j++)
+					{
+						document.getElementById("priceId" + i + "number" + j).remove();
+					}
+				}
+			}
+		
+			$(".product").draggable({ revert: true, revertDuration: 75, stack: ".product" });
+		}
+	}
+	
+</script>
+
+<style type="text/css">
+
+	#dropArea {position:			absolute;
+			   left:				800px;
+			   top:					8px;
+			   width:				450px;
+			   text-align:			center}
+			   
+	.product {position:				relative;
+			  width:				250px;
+			  height:				100px;
+			  background-color:		white;
+			  border-style:			inset;
+			  border-color:			black;
+			  text-align:			center}
+			  
+	.price {position:			relative;
+			width:				185px;
+			height:				20px;
+			left:				50px;
+			background-color:	white;
+			border-style:		inset;
+			border-color:		black;
+			text-align:			center}
+			  
+	.compareProduct {position:			relative;
+			  		 width:				250px;
+			  		 height:			100px;
+			  		 left:				0;
+			  		 right:				0;
+			  		 margin:			auto;
+			  		 background-color:	white;
+			  		 border-style:		inset;
+			  		 border-color:		black;
+			  		 text-align:		center}
+	
+	.ui-droppable {border:	inset #FFD4D4;
+				   background-color:	#D4FFFF}
+	
+	.ui-droppable-active {border:			inset #CCFFD2;
+						  background-color:	#FFCCF9}
+
+</style>
+
+</head>
+
+<body onload="runSliders(); moreInfoClick()">
+
+	<div id="section1" style="width:400px">
+		Speed (MHz)
+		<br>	
+		<textarea id="speedValue" disabled></textarea>
+		<br>
+		<div id="speedRange" style="width:400px"></div>
+		<br>
+		Memory (GB)
+		<br>	
+		<textarea id="memoryValue" disabled></textarea>
+		<br>
+		<div id="memoryRange" style="width:400px"></div>
+		<br>
+		Rating (Out of 5)
+		<br>	
+		<textarea id="ratingValue" disabled></textarea>
+		<br>
+		<div id="ratingRange" style="width:400px"></div>
+	</div>
+	
+	<div id="section2" style="position:absolute;left:450px;top:0px;margin-top:8px">
+	</div>
+	
+	<div id="dropArea" style="height:300px">
+		Please drag the items you wish to compare here:
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+<h1> CS6115 Assignment Report </h1>
+<h2> Conor Higgins </h2>
+<h2> 112415582 </h2>
+
+<br>
+
+<section name="introduction">
+	<h3> Introduction </h3>
+	<p>
+		The purpose of this assignment is to analyse the usability of a particular website, and then to design and build a limited functionality prototype of the site, which implements some improvements upon the original site’s design. The website that was chosen for this assignment was a price comparison website, called Geizhals (located at <a href="https://geizhals.eu/">https://geizhals.eu</a>). The purpose of the website is to compare different pieces of PC hardware, for enthusiast to purchase for the purpose of building their own PCs. The website also has sections for purchasing of other related items, such as video games, mobile phones, movies, etc. In terms of user base, the most likely users of the site would be both highly motivated towards improving their computer skills, and would have expert computing experience. As such, any improvements made to the website would have to factor in that the user would want as much information as possible about each product that they are comparing.
+	</p>
+</section>
+
+<section name="analysis">
+	<h3> Analysis </h3>
+	<p>
+		The main operation of the website is as follows; the user first chooses the category that they want to compare items from, often by navigating through a series of sub-menus to find the appropriate category of items (e.g. Hardware > Grapics Cards > PCIe). Once the category is reached, the items are displayed in a table, with a few stats displayed, and the ability to search the table or filter through some criteria by using checkboxes. Items can also be compared against one another on a different screen, highlighting details that the compared items share. The final functionality is accessed when an item is selected; the item’s page has a further table which displays what websites the item can be purchased from, and its price from that location. In terms of usability, the website was analysed using Shneiderman’s Eight Golden Rules. While these are not hard and fast rules, they do provide a series of guidelines that the usability of the website can be tested against, and will allow for suggestions to be made on how to improve certain aspects.
+	</p>
+	
+	<ol>
+		<li>
+			<em>Strive for consistency:</em> For the most part, the layout of the site is consistent. There is a consistent element in clicking on each category to reach the final subcategory. Additionally, once in the table views for either item list or item details, the table view layout is similar in nature and design. However, there are often many different elements on the screen at once (different divs, images, titles) and often have different stylings, which could cause a user to be thrown off.
+		</li>
+		<li>
+			<em>Cater for universal usability:</em> It is very clear that the website is designed for experts. There is a large deal of technical detail presented in almost every page, with no context or explanation given for much of it. Additionally, to access the desired pages, the user must navigate through a long series of previous pages, with new content displayed on each. A better way to achieve this would be to update the content dynamically.
+		</li>
+		<li>
+			<em>Offer informative feedback:</em> While the website is somewhat lacking in this, it does feature reasonable feedback in the comparison menu. When a button is toggled, different aspects of the items are highlighted, based on common details. However, there is a lot less feedback in the price comparison section, with no real ability to see information other than hiding it based on checkboxes.
+		</li>
+		<li>
+			<em>Design dialogs to yield closure:</em> Closure can be hard to achieve from the website as the users often have to navigate back and forth between two pages: comparison between items, and comparison between prices. Therefore, it is difficult to come to a satisfying conclusion that one item at once price has been found. This could be rectified by having the price and item comparison occur on a single page.
+		</li>
+		<li>
+			<em>Prevent errors:</em> The website does a good job of preventing errors. No action leads to errors occurring, as the menus, while quite dense, are comprised of simple elements.
+		</li>
+		<li>
+			<em>Permit easy reversal of actions:</em> As most actions performed by the user are facilitated by simple checkboxes, it is very easy to reverse an action. However, since any action reloads the page, users may become frustrated if they perform a number of actions and wish to undo them all, as it is tedious to do so by waiting for each to resolve.
+		</li>
+		<li>
+			<em>Support internal locus of control:</em> On first glance, it can be quite difficult for users to retrieve the data they require from the website, as there is quite a large volume presented. The interface also changed drastically between searching for items, and then searching the prices of each item, which can lead to anxiety and stress from the user.
+		</li>
+		<li>
+			<em>Reduce sort-term memory load:</em> The website is very bad for taxing a user’s short-term memory. To get to a desired item, the user must navigate through a long array of previous windows, which could be placed into one. Additionally, there are times when the display can feel very cluttered, and too bloated with information. It may also be hard for a user to remember both the prices for the item they desire, and the comparison of said item to others, as they are not on the same page.
+		</li>
+	</ol>
+</section>
+
+<section name="prototyping">
+	<h3> Prototyping </h3>
+	<p>
+		In order to address some of the issues present with the website’s usability, a new prototype was proposed, in order to make the interface easier to use, and more appealing. This was achieved using a combination of HTML5, JavaScript, and the jQuery library. The prototype shows a page that a user could use to filter items, compare them, and check their prices all at once, without having to navigate through different pages and menus. The products are represented by divs that have their relevant specifications written onto them, clearly labelled so that the user can decide what they are looking for. If there are a large number of items, the user can filter them by using a number of range sliders, which filter based on different criteria. These sliders are jQuery range sliders with two handles, and create/append and remove the products as necessary if the relevant parameters fall within the desired range.
+	</p>
+	
+	<p>
+		Each item can be dragged around the page as well, reverting to its position once it is released. The items can then be dropped into the comparison area, which lights up when an item is being dragged, indicating to the user that an item can be placed there. Both of these functions are achieved using  jQuery, assigning “draggable” and “droppable” properties to relevant HTML elements.
+	</p>
+	
+	<p>
+		When an item is dropped into the comparison area, it reverts back to its original location, and a new element is created inside the area, containing the information of the product. The size of the comparison area also changed based on the number of items being compared within it. If the user tries to place the same item into the comparison area more than once, they are presented with a warning, saying that it is not allowed, and a second item is not created; this avoids an item being compared against itself. Whenever an item is dropped into the area, if there are two or more present, they will be compared against one another using various JavaScript functions, and the highest value of each parameter will be highlighted in green, while the lowest will be highlighted in red (will result in orange if there is a draw). This way, the user gets visual feedback on which item has the superior specifications. If an item in the compare are is clicked, it is removed, and the new highest and lowest values are calculated once again.
+	</p>
+	
+	<p>
+		Finally, the products themselves can be clicked on, at which point an accordion menu-style interface drops down from the product, showing its price on different websites. The highest price will be highlighted in green, with the lowest price being highlighted in red. This way, the user can compare items in the compare area to find the one they find most appealing, and then click on it in the list to find out the best place to purchase it. A second click on the product will hide the price list (the accordion menu functionality is enabled using jQuery).
+	</p>
+</section>
+
+<section name="conclusion">
+	<h3> Conclusion </h3>
+	<p>
+		These are just a few ways that the user experience of Geizhals could be improved. By taking the current interaction model of form-filling and menu selection, and replacing it with direct manipulation, the user has a much more tactile response to their actions, and can gather the information that they are looking for much more easily. The website becomes much easier to use, especially for novices who may not have as much domain knowledge as expert users; simple actions like highlighting the best and worst stats helps them to make a much more informed choice.
+	</p>
+</section>
